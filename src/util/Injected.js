@@ -13,7 +13,7 @@ exports.ExposeStore = (moduleRaidStr) => {
     window.Store.Cmd = window.mR.findModule('Cmd')[0].Cmd;
     window.Store.CryptoLib = window.mR.findModule('decryptE2EMedia')[0];
     window.Store.DownloadManager = window.mR.findModule('downloadManager')[0].downloadManager;
-    window.Store.Features = window.mR.findModule('FEATURE_CHANGE_EVENT')[0].LegacyPhoneFeatures;
+    window.Store.Features = window.mR.findModule('FEATURE_CHANGE_EVENT')[0]?.LegacyPhoneFeatures;
     window.Store.GroupMetadata = window.mR.findModule('GroupMetadata')[0].default.GroupMetadata;
     window.Store.Invite = window.mR.findModule('sendJoinGroupViaInvite')[0];
     window.Store.InviteInfo = window.mR.findModule('sendQueryGroupInvite')[0];
@@ -114,7 +114,7 @@ exports.ExposeStore = (moduleRaidStr) => {
     // Find button models
     window.Store.TemplateButtonModel = window.findProxyModel('TemplateButtonModel');
     window.Store.TemplateButtonCollection = window.mR.findModule('TemplateButtonCollection')[0].TemplateButtonCollection;
-    
+
     // Find quick reply models
     window.Store.ReplyButtonModel = window.findProxyModel('ReplyButtonModel');
     window.Store.ButtonCollection = window.mR.findModule('ButtonCollection')[0].ButtonCollection;
@@ -264,14 +264,14 @@ exports.ExposeStore = (moduleRaidStr) => {
             }
             return 'text';
         }
-        
+
         if (
             proto.buttonsMessage?.headerType === 1 ||
             proto.buttonsMessage?.headerType === 2
         ) {
             return 'text';
         }
-        
+
         return func(...args);
     });
 
@@ -331,7 +331,7 @@ exports.ExposeStore = (moduleRaidStr) => {
 
         return func(...args);
     });
-    
+
     window.injectToFunction({
         index: 0,
         name: 'encodeMaybeMediaType',
@@ -351,7 +351,7 @@ exports.ExposeStore = (moduleRaidStr) => {
     }
 
     const _isMDBackend = window.mR.findModule('isMDBackend');
-    if(_isMDBackend && _isMDBackend[0] && _isMDBackend[0].isMDBackend) {
+    if (_isMDBackend && _isMDBackend[0] && _isMDBackend[0].isMDBackend) {
         window.Store.MDBackend = _isMDBackend[0].isMDBackend();
     } else {
         window.Store.MDBackend = true;
@@ -376,16 +376,16 @@ exports.LoadUtils = () => {
         if (!buttonsOptions.buttons) {
             return returnObject;
         }
-        
+
         if (typeof buttonsOptions.useTemplateButtons === 'undefined' || buttonsOptions.useTemplateButtons === null) {
             buttonsOptions.useTemplateButtons = buttonsOptions.buttons.some((button) => {
                 return 'callButton' in button || 'urlButton' in button;
             });
         }
-        
+
         returnObject.title = buttonsOptions.title;
         returnObject.footer = buttonsOptions.footer;
-    
+
         if (buttonsOptions.useTemplateButtons) {
             returnObject.isFromTemplate = true;
             returnObject.hydratedButtons = buttonsOptions.buttons;
@@ -422,7 +422,7 @@ exports.LoadUtils = () => {
 
             returnObject.dynamicReplyButtons = buttonsOptions.buttons.map((button, index) => ({
                 buttonId: button.quickReplyButton.id.toString() || `${index}`,
-                buttonText: {displayText: button.quickReplyButton?.displayText},
+                buttonText: { displayText: button.quickReplyButton?.displayText },
                 type: 1,
             }));
 
@@ -458,8 +458,8 @@ exports.LoadUtils = () => {
             let quotedMessage = window.Store.Msg.get(options.quotedMessageId);
 
             // TODO remove .canReply() once all clients are updated to >= v2.2241.6
-            const canReply = window.Store.ReplyUtils ? 
-                window.Store.ReplyUtils.canReplyMsg(quotedMessage.unsafe()) : 
+            const canReply = window.Store.ReplyUtils ?
+                window.Store.ReplyUtils.canReplyMsg(quotedMessage.unsafe()) :
                 quotedMessage.canReply();
 
             if (canReply) {
@@ -880,17 +880,17 @@ exports.LoadUtils = () => {
             chatId = window.Store.WidFactory.createWid(chatId);
         }
         switch (state) {
-        case 'typing':
-            await window.Store.ChatState.sendChatStateComposing(chatId);
-            break;
-        case 'recording':
-            await window.Store.ChatState.sendChatStateRecording(chatId);
-            break;
-        case 'stop':
-            await window.Store.ChatState.sendChatStatePaused(chatId);
-            break;
-        default:
-            throw 'Invalid chatstate';
+            case 'typing':
+                await window.Store.ChatState.sendChatStateComposing(chatId);
+                break;
+            case 'recording':
+                await window.Store.ChatState.sendChatStateRecording(chatId);
+                break;
+            case 'stop':
+                await window.Store.ChatState.sendChatStatePaused(chatId);
+                break;
+            default:
+                throw 'Invalid chatstate';
         }
 
         return true;
